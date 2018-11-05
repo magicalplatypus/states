@@ -19,14 +19,14 @@ import requests
 ###database connection specifications###
 #host will always be localhost#
 #host = "localhost"
-database = "postgis_25_sample"
-user = "postgres"
-password = "admin"
+database = "databaseVal"
+user = "userVal"
+password = "passwordVal"
 #change schemaN and tableN to match where local DB stores geometry information about states
-schemaN = 'usStates'
-tableN = 'cb2017'    
+schemaN = 'schemaNVal'
+tableN = 'tableNVal'    
 #enter key for google api
-key = 'AIzaSyApp6MahuQvRLj6nLBxkfFc0D50j-ZD8DA'
+key = 'keyVal'
 
 
 # call 1st to start database connection

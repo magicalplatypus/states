@@ -19,6 +19,8 @@ inside main folder of project enter:
 To connect to your local database:
 	in whatstateisit.py:	
 		replace database with database name
+		replace userVal with db username
+		replace passwordVal with db password
    		replace keyVal with your google api key
 		replace schemaNVal with the name of schema used in your db
 		replace tableNVal with  name of table used in your db

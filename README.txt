@@ -26,7 +26,7 @@ To connect to your local database:
 		replace tableNVal with  name of table used in your db
 
 to start server:
-	waitress-server --port 8000 states.app:api
+	waitress-serve --port 8000 states.app:api
 
 test in postman with:
 	get request

@@ -65,19 +65,25 @@ def getLatLong(address, key):
             'address': address,
             'key': key
             }
+
     #create and execute json request
     req = requests.get(GOOGLE_API_URL, params=parameters)
     results = req.json()
     
-    #isolate first result and extract lat and long and store as dictionary to return
-    result = results['results'][0]
+    #get status for error checking
+    status = results['status']
     
-    geoLocation = dict()
-    geoLocation['lat'] = result['geometry']['location']['lat']
-    geoLocation['lng'] = result['geometry']['location']['lng']
+    #check to see if google api failed
+    if status == "ZERO_RESULTS" :
+        print ("google api failed")
+        return "address was invalid", "address was invalid"
     
-    
-    return geoLocation
+    #if google api returns OK fill lat and long with their values
+    if status == "OK" :
+        result = results['results'][0]
+    lat = result['geometry']['location']['lat']
+    lng = result['geometry']['location']['lng']
+    return lat,lng
 
 
 
@@ -90,8 +96,7 @@ def getState(cur,geoLoc,schemaN,tableN):
     query1 = "SELECT name FROM \""+ schemaN +"\"."+ tableN + " WHERE ST_Contains(geom, ST_Transform(ST_GeometryFromText(\'POINT("
     query2 = ")\',4269), 4269));"
     query = query1 + str(geoLoc['lng']) +' ' + str(geoLoc['lat']) + query2
-    #print query
-    #Make queryto postGis postgreSQL database and get answer in formatted text
+    #Make queryto postGis postgreSQL database and get answer 
     cur.execute(query)
     state = cur.fetchone()
     
@@ -104,10 +109,23 @@ def getState(cur,geoLoc,schemaN,tableN):
 #takes in cursor and address from api
 def execute(cur, address):
 	
-	geoLoc = getLatLong(address,key)
-	state = getState(cur, geoLoc, schemaN, tableN)
-	print (state)
-	return str(state)
+     #get lat long from address through google api
+     lat, lng = getLatLong(address,key)
+     #check if error message was placed in Lat
+     if lat != "address was invalid" :
+         #if lat lng returned correctly query database for state
+         state = getState(cur, lat, lng , schemaN, tableN)
+         #check if db returns none for no results
+         if state != None :
+             #if results returned print state to console and return state as a string to user
+             print (state)
+             return str(state[0])
+         #message for when query fails: address outside of US
+         print ("Address entered was outside of the United States.")
+         return "Address entered was  outside of the Unites States. Please try a different address."
+     #message for when google api fails
+     print ("Address was invalid")
+     return "Address entered was invalid. Please try a different address."
 
 
 
